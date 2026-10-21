@@ -977,7 +977,8 @@ def main(args):
                           'add_gcc_include_dirs_with_isystem',
                           'compiler_info_file',
                           'dump_compiler_info_file',
-                          'enable_z3_refutation']
+                          'enable_z3_refutation',
+                          'trim_path_prefix']
         for key in args_to_update:
             __update_if_key_exists(args, analyze_args, key)
         if 'clean' in args:

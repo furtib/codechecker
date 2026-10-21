@@ -384,6 +384,27 @@ def add_arguments_to_parser(parser):
                         help="Annotate the run analysis with a custom name in "
                              "the created metadata file.")
 
+    parser.add_argument('--trim-path-prefix',
+                        type=str,
+                        nargs='*',
+                        dest="trim_path_prefix",
+                        required=False,
+                        default=argparse.SUPPRESS,
+                        help="Removes leading path from the source file paths "
+                             "stored in the generated analysis result (e.g. "
+                             "'.plist') files. For instance if a source file "
+                             "is analyzed as "
+                             "'/path/to/cache/<hash>/my_proj/x.cpp', but you "
+                             "would prefer to have it stored as "
+                             "'my_proj/x.cpp' in the result files (so that "
+                             "they become independent of the local, e.g. "
+                             "Bazel cache, directory layout), invoke "
+                             "CodeChecker with '--trim-path-prefix "
+                             "\"/path/to/cache/*/\"'. If multiple prefixes "
+                             "are given, the longest match will be removed. "
+                             "You may also use Unix shell-like wildcards "
+                             "(e.g. '/*/cache/').")
+
     analyzer_opts = parser.add_argument_group("analyzer arguments")
 
     analyzer_opts.add_argument('--analyzers',

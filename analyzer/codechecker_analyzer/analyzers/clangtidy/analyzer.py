@@ -638,6 +638,7 @@ class ClangTidy(analyzer_base.SourceAnalyzer):
             buildaction, report_output, report_hash)
 
         res_handler.skiplist_handler = skiplist_handler
+        res_handler.trim_path_prefix = self.config_handler.trim_path_prefix
         return res_handler
 
     @classmethod

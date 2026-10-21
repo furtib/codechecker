@@ -59,6 +59,10 @@ class AnalyzerConfigHandler(metaclass=ABCMeta):
         self.analyzer_config = None
         self.report_hash = None
         self.enable_all = None
+        # List of path prefixes to be trimmed from the source file paths
+        # stored in the generated analyzer result files
+        # (see 'CodeChecker analyze --trim-path-prefix').
+        self.trim_path_prefix = None
 
         # The key is the checker name, the value is a tuple of CheckerState and
         # checker description.

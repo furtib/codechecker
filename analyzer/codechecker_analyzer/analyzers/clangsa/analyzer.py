@@ -727,6 +727,7 @@ class ClangSA(analyzer_base.SourceAnalyzer):
                                            self.config_handler.report_hash)
 
         res_handler.skiplist_handler = skiplist_handler
+        res_handler.trim_path_prefix = self.config_handler.trim_path_prefix
 
         return res_handler
 
