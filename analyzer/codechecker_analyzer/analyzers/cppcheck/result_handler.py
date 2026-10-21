@@ -97,6 +97,10 @@ class CppcheckResultHandler(ResultHandler):
         if rs_handler:
             reports = [r for r in reports if not rs_handler.should_ignore(r)]
 
+        if self.trim_path_prefix:
+            for report in reports:
+                report.trim_path_prefixes_persisted(self.trim_path_prefix)
+
         report_file.create(
             self.analyzer_result_file, reports, self.checker_labels,
             self.analyzer_info)

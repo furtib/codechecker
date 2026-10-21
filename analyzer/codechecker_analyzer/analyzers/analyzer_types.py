@@ -250,11 +250,16 @@ def build_config_handlers(args, enabled_analyzers):
 
     analyzer_config_map = {}
 
+    # Path prefixes to be trimmed from the source file paths stored in the
+    # generated analyzer result files (see 'analyze --trim-path-prefix').
+    trim_path_prefix = getattr(args, 'trim_path_prefix', None)
+
     for ea in enabled_analyzers:
         assert supported_analyzers[ea].analyzer_binary(), \
             "At this point, we should've checked if this analyzer has a " \
             "binary!"
         config_handler = supported_analyzers[ea].construct_config_handler(args)
+        config_handler.trim_path_prefix = trim_path_prefix
         analyzer_config_map[ea] = config_handler
 
     return analyzer_config_map

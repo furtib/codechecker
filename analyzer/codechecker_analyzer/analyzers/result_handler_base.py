@@ -70,6 +70,13 @@ class ResultHandler(metaclass=ABCMeta):
         # report id (hash) values.
         self.report_hash_type = report_hash_type
 
+        # List of path prefixes to be trimmed from the source file paths
+        # stored in the generated analyzer result files
+        # (see 'CodeChecker analyze --trim-path-prefix'). When set, the
+        # leading prefix is removed from every referenced source file path
+        # before the result file is written to disk.
+        self.trim_path_prefix: list[str] | None = None
+
     @property
     def buildaction(self):
         return self.__buildaction

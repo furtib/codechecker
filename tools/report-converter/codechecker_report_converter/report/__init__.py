@@ -110,6 +110,30 @@ class File:
             self.__path, path_prefixes)
         return self.__path
 
+    def trim_path(self, path_prefixes: list[str] | None = None) -> str:
+        """
+        Removes the longest matching leading path from every member of this
+        file: the display path, the original (persisted) path and the unique
+        id.
+
+        Unlike trim() -- which only affects the display path used by the
+        'parse' command -- this method also rewrites the original_path. The
+        original_path is the value written into the generated analyzer result
+        (e.g. '.plist') files, so this is the method to call when the trimmed
+        path has to be persisted (e.g. 'CodeChecker analyze
+        --trim-path-prefix').
+        """
+        trimmed = util.trim_path_prefixes(
+            self.__original_path, path_prefixes)
+
+        self.__path = trimmed
+        self.__original_path = trimmed
+        self.__id = trimmed
+        # The file name only depends on the basename, which does not change
+        # when a leading prefix is removed, but reset the cache to be safe.
+        self.__name = None
+        return trimmed
+
     def to_json(self) -> dict:
         """ Creates a JSON dictionary. """
         return {
@@ -398,6 +422,40 @@ class Report:
             self.macro_expansions
         ):
             event.file.trim(path_prefixes)
+
+    def trim_path_prefixes_persisted(
+        self,
+        path_prefixes: list[str] | None = None
+    ):
+        """
+        Removes the longest matching leading path from every referenced file
+        path, including the original (persisted) path.
+
+        Contrary to trim_path_prefixes() -- which only trims the display path
+        and therefore does not affect the generated analyzer result files --
+        this method trims the original_path too. It is meant to be used before
+        writing the result (e.g. '.plist') files to disk so that the persisted
+        source file paths become independent of the local (e.g. Bazel cache)
+        directory layout.
+        """
+        if not path_prefixes:
+            return
+
+        # Iterate over every File object referenced by this report (including
+        # the ones referenced through events). We deliberately do not use the
+        # deduplicated 'files' property here: multiple events may reference
+        # distinct File objects that happen to share the same path, and each
+        # of them has to be trimmed so that no original (untrimmed) path is
+        # left behind in the written result file.
+        self.file.trim_path(path_prefixes)
+
+        for event in itertools.chain(
+            self.bug_path_events,
+            self.bug_path_positions,
+            self.notes,
+            self.macro_expansions
+        ):
+            event.file.trim_path(path_prefixes)
 
     @property
     def files(self) -> set[File]:
